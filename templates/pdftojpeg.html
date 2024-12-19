@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link to Google Fonts (Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>PDF CONVERTER</title>
+
+    <style>
+        /* Add a turquoise background color to the top navigation */
+        .topnav {
+            background-color: #008080;
+            overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add an active class to highlight the current page */
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        /* Hide the link that should open and close the topnav on small screens */
+        .topnav .icon {
+            display: none;
+        }
+
+        /* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+        @media screen and (max-width: 600px) {
+            .topnav a:not(:first-child) {
+                display: none;
+            }
+            .topnav a.icon {
+                float: right;
+                display: block;
+            }
+        }
+
+        /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+        @media screen and (max-width: 600px) {
+            .topnav.responsive {
+                position: relative;
+            }
+            .topnav.responsive a.icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+            .topnav.responsive a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #008080;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        button[type="submit"], button[type="button"] {
+            background-color: #008080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover, button[type="button"]:hover {
+            background-color: #006666;
+        }
+
+        .author-tag {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+        }
+
+        .author-tag a {
+            color: #008080;
+            text-decoration: none;
+        }
+
+        .author-tag a:hover {
+            text-decoration: underline;
+        }
+    </style>
+  <style>
+    /* Basic styling for the topnav */
+    .topnav {
+        background-color: #008080;
+        overflow: hidden;
+    }
+
+    .topnav a, .topnav select {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+        border: none;
+        background: none;
+    }
+
+    .topnav a:hover, .topnav select:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    .topnav a.active {
+        background-color: #04AA6D;
+        color: white;
+    }
+
+    /* Hide the link that should open and close the topnav on small screens */
+    .topnav .icon {
+        display: none;
+    }
+
+    /* When the screen is less than 600px wide, display the icon and hide links */
+    @media screen and (max-width: 600px) {
+        .topnav a:not(:first-child), .topnav select {
+            display: none;
+        }
+
+        .topnav a.icon {
+            float: right;
+            display: block;
+        }
+    }
+
+    /* When the screen is less than 600px, show the links vertically */
+    @media screen and (max-width: 600px) {
+        .topnav.responsive {
+            position: relative;
+        }
+
+        .topnav.responsive a.icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .topnav.responsive a, .topnav.responsive select {
+            float: none;
+            display: block;
+            text-align: left;
+        }
+    }
+</style>
+
+
+
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myTopnav");
+            if (x.className === "topnav") {
+                x.className += " responsive";
+            } else {
+                x.className = "topnav";
+            }
+        }
+        
+    </script>
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myTopnav");
+            if (x.className === "topnav") {
+                x.className += " responsive";
+            } else {
+                x.className = "topnav";
+            }
+        }
+
+        // Function to handle redirection based on the selected option
+        function redirectToPage() {
+            var selectedOption = document.getElementById("pdf_options").value;
+            if (selectedOption) {
+                window.location.href = selectedOption;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="topnav" id="myTopnav">
+        <a href="/" class="active">QR CODE</a>
+        
+        <!-- Dropdown to select PDF options -->
+        <select name="pdf_options" id="pdf_options" onchange="redirectToPage()">
+            <option value="">Veprime me PDF</option>
+            <option value="/pdftopng">PDF to PNG</option>
+            <option value="/pdftojpg">PDF to JPG</option>
+            <option value="/pdftojpeg">PDF to JPEG</option>
+        </select>
+        
+        <!-- Toggle button for smaller screens -->
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i>
+        </a>
+    </div>
+
+    <h1>KONVERTO PDF -> JPEG</h1>
+    <form action="/pdftojpeg" method="POST" enctype="multipart/form-data">
+        <hr />
+        <label for="pdf_file">Shkarkoni PDF tuaj:</label>
+        <input type="file" id="pdf_file" name="pdf_file" accept="application/pdf" required>
+        <button type="submit">Konverto</button>
+    </form>
+
+    {% if data %}
+    <h2>Konvertimi u krye!</h2>
+    <p>Shtypni poshte te shkarkoni dokumentin e konvertuar :</p>
+    <a href="{{ data }}" download>
+        <button type="button">Shkarko Imazhin</button>
+    </a>
+    {% endif %}
+
+    <div class="author-tag">
+        <a href="https://alteakapxhiu.github.io/PersonalWebsite/"><span>© Altea K.</span></a>
+    </div>
+
+</body>
+</html>
+
+  
