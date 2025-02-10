@@ -470,33 +470,42 @@
         <a href="/text2speech" >Text2Speech</a>
         <a href="/chatbot" >ChatBot</a>
 
-
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="fa fa-bars"></i>
         </a>
     </div>
   
-
-<div class="card">
-    <div class="title">
-        <h1>Miresevjen ne QR Code Generator!</h1>
-        <h2>Shtypni butonin per te gjeneruar nje kod sipas deshires tuaj!</h2>
-        <form action="/" method="POST">
-            <input type="text" name="link" placeholder="Vendosni linkun tuaj" required>
-            <button type="submit">Gjenero Kodin QR</button>
-        </form>
-        <div class="generated">
-            {% if data %}
-                <p>QR KODI JUAJ ESHTE GJENERUAR ME SUKSES</p>
-                <img src="{{data}}" class="KodiIMG">
-                <div class="DownloadButton">
-                    <a href="{{data}}" download="QR.png">
-                        <button>Shkarko QR Kodin</button>
-                    </a>
-                </div>
-            {% endif %}
+    <div class="card">
+        <div class="title">
+            <h1>Tekst ne Mesazh Zanor</h1>
+            <h2>Ju lutem vendosni tekstin ne anglisht qe doni te ktheni ne mesazh zanor!</h2>
+            <form action="/text2speech" method="POST">
+                <input type="text" name="text" placeholder="Vendosni mesazhin tuaj" required>
+                <button type="submit">Gjenero Mesazhin</button>
+            </form>
+            <div class="generated">
+                {% if data %}
+                    <p>MESAZHI JUAJ ESHTE GJENERUAR ME SUKSES</p>
+                    <div class="audio-player">
+                        <audio controls>
+                            <source src="{{ data }}" type="audio/mp3">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    <div class="DownloadButton">
+                        <a href="{{ data }}" download="sample.mp3">
+                            <button>Shkarko Mesazhin</button>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div><div class="author-tag">
+    </div>
+    
+   
+
+        
+        <div class="author-tag">
     <a href="https://alteakapxhiu.github.io/PersonalWebsite/"><span>© Altea K.</span></a>
 </div>
 </div>
