@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, send_file
 import fitz  
-import openai
+from google import genai
 import qrcode
 from flask import Flask, render_template, request
 from io import BytesIO
@@ -8,13 +8,16 @@ from base64 import b64encode
 import os
 from flask import Flask, render_template, request, url_for
 from flask import Flask, request, jsonify, render_template
-
+from dotenv import load_dotenv
 from gtts import gTTS
 import warnings
 
-app = Flask(__name__)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")  # Fetch API key securely from environment variable
+app = Flask(__name__)
+load_dotenv()  # Load environment variables from the .env file
+
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
 
 
 UPLOAD_FOLDER = 'uploads'
@@ -136,6 +139,9 @@ def pdftopng():
 
     return render_template('pdftopng.html')
 
+
+
+
 @app.route('/text2speech', methods=['GET', 'POST'])
 def text2speech():
     warnings.filterwarnings("default")
@@ -173,12 +179,15 @@ def text2speech():
     
     return render_template('text2speech.html')
 
+
+
 @app.route("/chatbot", methods=["POST"])
 def chatbot():
     print("Received request:", request.json)
 
+    # Get the user's message
     user_message = request.json.get("message")
-    
+
     if not user_message:
         print("No message received.")
         return jsonify({"response": "No message received."})
@@ -186,34 +195,25 @@ def chatbot():
     print(f"User message: '{user_message}'")
 
     try:
-        # OpenAI API call using correct syntax
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use the correct model name (e.g., "gpt-4")
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message}
-            ]
+        # Generate response using Gemini model
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",  # Adjust to the correct model if necessary
+            contents=user_message  # Use the user's message as input
         )
 
-        # Get bot's response
-        bot_response = response['choices'][0]['message']['content']
+        # Access the text field from the response object (not by subscript)
+        bot_response = response.text
         print(f"Bot response: '{bot_response}'")
 
         return jsonify({"response": bot_response})
-
+    
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({"response": "Sorry, there was an error processing your message."})
+        return jsonify({"response": "Sorry, there was an error processing your message."}), 500
 
-
-# Route for serving the chatbot UI
 @app.route("/chatbot", methods=["GET"])
 def chatbot_html():
     return render_template('chatbot.html')
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
 if __name__ == "__main__":
     app.run(debug=True)
