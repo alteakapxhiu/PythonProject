@@ -11,7 +11,8 @@ from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from gtts import gTTS
 import warnings
-
+import speech_recognition as sr
+import pyttsx3
 
 app = Flask(__name__)
 load_dotenv()  # Load environment variables from the .env file
@@ -180,12 +181,55 @@ def text2speech():
     return render_template('text2speech.html')
 
 
+# Function to generate voice from text
+def generate_voice(text):
+    tts = gTTS(text=text, lang="en", slow=False)
+    voice_path = os.path.join(app.static_folder, "response.mp3")
+    
+    if not os.path.exists(app.static_folder):
+        os.makedirs(app.static_folder)
+
+    tts.save(voice_path)
+    return url_for('static', filename="response.mp3")
+
+# Function to process speech input
+def recognize_speech():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        recognizer.adjust_for_ambient_noise(source)
+        try:
+            audio = recognizer.listen(source, timeout=5)
+            text = recognizer.recognize_google(audio)
+            return text
+        except sr.UnknownValueError:
+            return "Sorry, I didn't catch that."
+        except sr.RequestError:
+            return "Could not process voice input."
+        
+# Voice Chatbot Route (Speech Input and Output)
+@app.route("/voicechat", methods=["POST"])
+def voicechat():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        try:
+            recognizer.adjust_for_ambient_noise(source)
+            audio = recognizer.listen(source)
+            text = recognizer.recognize_google(audio)  # Convert speech to text
+            print(f"Recognized: {text}")
+
+            return jsonify({"response": text})  # Send text back to frontend
+        except sr.UnknownValueError:
+            return jsonify({"response": "Sorry, I couldn't understand that."})
+        except sr.RequestError as e:
+            return jsonify({"response": f"Error connecting to speech service: {e}"}), 500
+
 
 @app.route("/chatbot", methods=["POST"])
 def chatbot():
     print("Received request:", request.json)
 
-    # Get the user's message
     user_message = request.json.get("message")
 
     if not user_message:
@@ -195,13 +239,10 @@ def chatbot():
     print(f"User message: '{user_message}'")
 
     try:
-        # Generate response using Gemini model
         response = client.models.generate_content(
-            model="gemini-2.0-flash",  # Adjust to the correct model if necessary
-            contents=user_message  # Use the user's message as input
+            model="gemini-2.0-flash",  
+            contents=user_message  
         )
-
-        # Access the text field from the response object (not by subscript)
         bot_response = response.text
         print(f"Bot response: '{bot_response}'")
 
